@@ -1,4 +1,4 @@
-FROM NETivism/docker-wheezy-mariadb 
+FROM netivism/docker-wheezy-mariadb 
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 # Use lenny repository for PHP 5.2.17.
