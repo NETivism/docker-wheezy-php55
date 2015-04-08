@@ -7,7 +7,7 @@ RUN echo "deb http://packages.dotdeb.org wheezy all" > dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" >> dotdeb.list \
     && echo "deb http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
-    && wget http://www.dotdeb.org/dotdeb.gpg \
+    && apt-get update && apt-get install -y wget && wget http://www.dotdeb.org/dotdeb.gpg \
     && apt-key add dotdeb.gpg && \
     rm -f dotdeb.gpg
 
