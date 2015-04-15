@@ -35,7 +35,11 @@ RUN \
 # remove default enabled site
 RUN \
   rm -f /etc/apache2/sites-enabled/000-default && \
-  a2enmod php5 && a2enmod rewrite
+  a2enmod php5 && a2enmod rewrite && \ 
+  rm -f /etc/apache2/conf.d/security.conf && \
+  rm -f /etc/apache2/conf.d/security && \
+  ln -s /home/docker/apache/netivism.conf /etc/apache/conf.d/ && \
+  ln -s /home/docker/php/default55.ini /etc/php5/apache2/conf.d/
 
 ADD sources/apache/security.conf /etc/apache2/conf.d/security.conf
 
