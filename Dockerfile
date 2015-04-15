@@ -33,11 +33,8 @@ RUN apt-get update && \
 RUN rm -f /etc/apache2/sites-enabled/000-default && \
     a2enmod php5 && a2enmod rewrite
 
-# Add customize site, security settings
-ADD sources/apache/netivism.conf /etc/apache2/conf.d/netivism.conf
-ADD sources/apache/security.conf /etc/apache2/conf.d/security.conf
+ADD [sources/apache/netivism.conf /etc/apache2/conf.d/netivism.conf] [sources/apache/security.conf /etc/apache2/conf.d/security.conf]
 
-# Manually set up the apache environment variables
 ENV APACHE_RUN_USER=www-data \
     APACHE_RUN_GROUP=www-data \
     APACHE_LOG_DIR=/var/log/apache2 \
@@ -48,5 +45,5 @@ ENV APACHE_RUN_USER=www-data \
 WORKDIR /etc/php5/conf.d
 RUN ln -s /home/docker/php/default55.ini
 
-### 
+### END
 WORKDIR /home/docker
