@@ -7,7 +7,7 @@ ENV \
   APACHE_RUN_GROUP=www-data \
   APACHE_LOG_DIR=/var/log/apache2 \
   APACHE_LOCK_DIR=/var/lock/apache2 \
-  APACHE_PID_FILE=/var/run/apache2.pid
+  APACHE_PID_FILE=/var/run/apache2.pid \
   COMPOSER_HOME=/root/.composer \
   PATH=/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
