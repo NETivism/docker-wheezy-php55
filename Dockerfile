@@ -1,6 +1,16 @@
 FROM netivism/docker-wheezy-mariadb 
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
+
+ENV \
+  APACHE_RUN_USER=www-data \
+  APACHE_RUN_GROUP=www-data \
+  APACHE_LOG_DIR=/var/log/apache2 \
+  APACHE_LOCK_DIR=/var/lock/apache2 \
+  APACHE_PID_FILE=/var/run/apache2.pid
+  COMPOSER_HOME=/root/.composer \
+  PATH=/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 WORKDIR /etc/apt/sources.list.d
 RUN echo "deb http://packages.dotdeb.org wheezy all" > dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" >> dotdeb.list \
@@ -29,6 +39,8 @@ RUN \
     wget && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* && \
+  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+  composer global require drush/drush:7.0.0 && \
   git clone https://github.com/NETivism/docker-sh.git /home/docker
 
 ### Apache
@@ -42,13 +54,6 @@ RUN \
   ln -s /home/docker/php/default55.ini /etc/php5/apache2/conf.d/
 
 ADD sources/apache/security.conf /etc/apache2/conf.d/security.conf
-
-ENV \
-  APACHE_RUN_USER=www-data \
-  APACHE_RUN_GROUP=www-data \
-  APACHE_LOG_DIR=/var/log/apache2 \
-  APACHE_LOCK_DIR=/var/lock/apache2 \
-  APACHE_PID_FILE=/var/run/apache2.pid
 
 ### END
 WORKDIR /home/docker
