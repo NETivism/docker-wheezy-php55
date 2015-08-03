@@ -1,7 +1,6 @@
 FROM netivism/docker-wheezy-mariadb 
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
-
 ENV \
   APACHE_RUN_USER=www-data \
   APACHE_RUN_GROUP=www-data \
@@ -56,4 +55,4 @@ RUN \
 ADD sources/apache/security.conf /etc/apache2/conf.d/security.conf
 
 ### END
-WORKDIR /home/docker
+WORKDIR /var/www/html
