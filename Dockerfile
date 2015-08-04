@@ -35,7 +35,7 @@ RUN \
     curl \
     vim \
     git-core \
-    wget && \
+    supervisor && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* && \
   curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
@@ -50,9 +50,17 @@ RUN \
   rm -f /etc/apache2/conf.d/security.conf && \
   rm -f /etc/apache2/conf.d/security && \
   ln -s /home/docker/apache/netivism.conf /etc/apache2/conf.d/ && \
-  ln -s /home/docker/php/default55.ini /etc/php5/apache2/conf.d/
+  ln -s /home/docker/php/default55.ini /etc/php5/apache2/conf.d/ && \
+  mkdir -p /var/www/html/log/supervisor && \
+  sed -i 's/KeepAlive[ ]*On*/KeepAlive Off/g' /etc/apache2/apache2.conf && \
+  sed -i 's/StartServers[ ]*[0-9]*/StartServers 2/g' /etc/apache2/apache2.conf && \
+  sed -i 's/MinSpareServers[ ]*[0-9]*/MinSpareServers 2/g' /etc/apache2/apache2.conf && \
+  sed -i 's/MaxSpareServers[ ]*[0-9]*/MaxSpareServers 5/g' /etc/apache2/apache2.conf && \
+  sed -i 's/MaxClients[ ]*[0-9]*/MaxClients 5/g' /etc/apache2/apache2.conf
 
-ADD sources/apache/security.conf /etc/apache2/conf.d/security.conf
+ADD container/apache/security.conf /etc/apache2/conf.d/security.conf
+ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ### END
 WORKDIR /var/www/html
+CMD ["/usr/bin/supervisord"]
