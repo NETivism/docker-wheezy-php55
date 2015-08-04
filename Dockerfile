@@ -23,6 +23,7 @@ WORKDIR /
 RUN \
   apt-get update && \
   apt-get install -y \
+    rsyslog \
     apache2 \
     libapache2-mod-php5 \
     php5-common \
@@ -34,10 +35,7 @@ RUN \
     php5-cli \
     curl \
     vim \
-    git-core \
-    supervisor && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/* && \
+    git-core && \
   curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
   composer global require drush/drush:7.0.0 && \
   git clone https://github.com/NETivism/docker-sh.git /home/docker
@@ -57,6 +55,10 @@ RUN \
   sed -i 's/MinSpareServers[ ]*[0-9]*/MinSpareServers 2/g' /etc/apache2/apache2.conf && \
   sed -i 's/MaxSpareServers[ ]*[0-9]*/MaxSpareServers 5/g' /etc/apache2/apache2.conf && \
   sed -i 's/MaxClients[ ]*[0-9]*/MaxClients 5/g' /etc/apache2/apache2.conf
+
+RUN \
+  apt-get install -y supervisor && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ADD container/apache/security.conf /etc/apache2/conf.d/security.conf
 ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
