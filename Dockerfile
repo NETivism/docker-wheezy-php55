@@ -51,10 +51,10 @@ RUN \
   ln -s /home/docker/php/default55.ini /etc/php5/apache2/conf.d/ && \
   mkdir -p /var/www/html/log/supervisor && \
   sed -i 's/KeepAlive[ ]*On*/KeepAlive Off/g' /etc/apache2/apache2.conf && \
-  sed -i 's/StartServers[ ]*[0-9]*/StartServers 2/g' /etc/apache2/apache2.conf && \
-  sed -i 's/MinSpareServers[ ]*[0-9]*/MinSpareServers 2/g' /etc/apache2/apache2.conf && \
-  sed -i 's/MaxSpareServers[ ]*[0-9]*/MaxSpareServers 5/g' /etc/apache2/apache2.conf && \
-  sed -i 's/MaxClients[ ]*[0-9]*/MaxClients 5/g' /etc/apache2/apache2.conf
+  sed -i 's/StartServers[ ]*[0-9]*/StartServers 1/g' /etc/apache2/apache2.conf && \
+  sed -i 's/MinSpareServers[ ]*[0-9]*/MinSpareServers 1/g' /etc/apache2/apache2.conf && \
+  sed -i 's/MaxSpareServers[ ]*[0-9]*/MaxSpareServers 2/g' /etc/apache2/apache2.conf && \
+  sed -i 's/MaxClients[ ]*[0-9]*/MaxClients 10/g' /etc/apache2/apache2.conf
 
 RUN \
   apt-get install -y supervisor && \
