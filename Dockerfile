@@ -24,8 +24,6 @@ RUN \
   apt-get update && \
   apt-get install -y \
     rsyslog \
-    apache2 \
-    libapache2-mod-php5 \
     php5-common \
     php5-curl \
     php5-gd \
@@ -33,6 +31,7 @@ RUN \
     php5-mysql \
     php5-curl \
     php5-cli \
+    php5-fpm \
     curl \
     vim \
     git-core && \
@@ -43,18 +42,14 @@ RUN \
 ### Apache
 # remove default enabled site
 RUN \
-  rm -f /etc/apache2/sites-enabled/000-default && \
-  a2enmod php5 && a2enmod rewrite && \ 
-  rm -f /etc/apache2/conf.d/security.conf && \
-  rm -f /etc/apache2/conf.d/security && \
-  ln -s /home/docker/apache/netivism.conf /etc/apache2/conf.d/ && \
-  ln -s /home/docker/php/default55.ini /etc/php5/apache2/conf.d/ && \
   mkdir -p /var/www/html/log/supervisor && \
-  sed -i 's/KeepAlive[ ]*On*/KeepAlive Off/g' /etc/apache2/apache2.conf && \
-  sed -i 's/StartServers[ ]*[0-9]*/StartServers 1/g' /etc/apache2/apache2.conf && \
-  sed -i 's/MinSpareServers[ ]*[0-9]*/MinSpareServers 1/g' /etc/apache2/apache2.conf && \
-  sed -i 's/MaxSpareServers[ ]*[0-9]*/MaxSpareServers 2/g' /etc/apache2/apache2.conf && \
-  sed -i 's/MaxClients[ ]*[0-9]*/MaxClients 10/g' /etc/apache2/apache2.conf
+  ln -s /home/docker/php/default55.ini /etc/php5/fpm/conf.d/ && \
+  sed -i 's/^listen = .*/listen = 80/g' /etc/php5/fpm/pool.d/www.conf && \
+  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php5/fpm/pool.d/www.conf && \
+  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php5/fpm/php-fpm.conf && \
+  sed -i 's/^pm\.max_children = .*/pm.max_children = 10/g' /etc/php5/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 30s/g' /etc/php5/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm.max_requests = .*/pm.max_requests = 500/g' /etc/php5/fpm/pool.d/www.conf
 
 RUN apt-get install -y supervisor
 
