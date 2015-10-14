@@ -45,6 +45,7 @@ RUN \
 RUN \
   mkdir -p /var/www/html/log/supervisor && \
   ln -s /home/docker/php/default55.ini /etc/php5/fpm/conf.d/ && \
+  ln -s /home/docker/php/default55_cli.ini /etc/php5/cli/conf.d/ && \
   sed -i 's/^listen = .*/listen = 80/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/^pm = .*/pm = ondemand/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php5/fpm/php-fpm.conf && \
