@@ -50,6 +50,7 @@ RUN \
   rm -f /etc/apache2/conf.d/security && \
   ln -s /home/docker/apache/netivism.conf /etc/apache2/conf.d/ && \
   ln -s /home/docker/php/default55.ini /etc/php5/apache2/conf.d/ && \
+  ln -s /home/docker/php/default55_cli.ini /etc/php5/cli/conf.d/ && \
   mkdir -p /var/www/html/log/supervisor && \
   sed -i 's/KeepAlive[ ]*On*/KeepAlive Off/g' /etc/apache2/apache2.conf && \
   sed -i 's/StartServers[ ]*[0-9]*/StartServers 1/g' /etc/apache2/apache2.conf && \
