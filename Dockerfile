@@ -44,8 +44,10 @@ RUN \
 # remove default enabled site
 RUN \
   mkdir -p /var/www/html/log/supervisor && \
-  cp -f /home/docker/php/default55.ini /etc/php5/fpm/conf.d/ && \
+  cp -f /home/docker/php/default55.ini /etc/php5/docker_setup.ini && \
+  ln -s /etc/php5/docker_setup.ini /etc/php5/fpm/conf.d/ && \
   cp -f /home/docker/php/default55_cli.ini /etc/php5/cli/conf.d/ && \
+  cp -f /home/docker/php/default_opcache_blacklist /etc/php5/opcache_blacklist && \
   sed -i 's/^listen = .*/listen = 80/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/^pm = .*/pm = ondemand/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php5/fpm/php-fpm.conf && \
