@@ -49,8 +49,10 @@ RUN \
   rm -f /etc/apache2/conf.d/security.conf && \
   rm -f /etc/apache2/conf.d/security && \
   cp -f /home/docker/apache/netivism.conf /etc/apache2/conf.d/ && \
-  cp -f /home/docker/php/default55.ini /etc/php5/apache2/conf.d/ && \
+  cp -f /home/docker/php/default55.ini /etc/php5/docker_setup.ini && \
+  ln -s /etc/php5/docker_setup.ini /etc/php5/fpm/conf.d/ && \
   cp -f /home/docker/php/default55_cli.ini /etc/php5/cli/conf.d/ && \
+  cp -f /home/docker/php/default_opcache_blacklist /etc/php5/opcache_blacklist && \
   mkdir -p /var/www/html/log/supervisor && \
   sed -i 's/KeepAlive[ ]*On*/KeepAlive Off/g' /etc/apache2/apache2.conf && \
   sed -i 's/StartServers[ ]*[0-9]*/StartServers 1/g' /etc/apache2/apache2.conf && \
