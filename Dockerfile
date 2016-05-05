@@ -58,7 +58,7 @@ RUN \
   sed -i 's/StartServers[ ]*[0-9]*/StartServers 1/g' /etc/apache2/apache2.conf && \
   sed -i 's/MinSpareServers[ ]*[0-9]*/MinSpareServers 1/g' /etc/apache2/apache2.conf && \
   sed -i 's/MaxSpareServers[ ]*[0-9]*/MaxSpareServers 2/g' /etc/apache2/apache2.conf && \
-  sed -i 's/MaxClients[ ]*[0-9]*/MaxClients 10/g' /etc/apache2/apache2.conf
+  sed -i 's/MaxClients[ ]*[0-9]*/MaxClients 8/g' /etc/apache2/apache2.conf
 
 RUN apt-get install -y supervisor
 
