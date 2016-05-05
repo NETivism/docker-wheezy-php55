@@ -51,7 +51,7 @@ RUN \
   sed -i 's/^listen = .*/listen = 80/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/^pm = .*/pm = ondemand/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php5/fpm/php-fpm.conf && \
-  sed -i 's/^pm\.max_children = .*/pm.max_children = 20/g' /etc/php5/fpm/pool.d/www.conf && \
+  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php5/fpm/pool.d/www.conf
 
 RUN apt-get install -y supervisor procps
