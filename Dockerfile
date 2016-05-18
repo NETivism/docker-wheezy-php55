@@ -56,6 +56,10 @@ RUN \
 
 RUN apt-get install -y supervisor procps
 
+# syslog
+RUN echo "local0.* /var/www/html/log/drupal.log" > /etc/rsyslog.conf && \
+  service rsyslog restart
+
 # wkhtmltopdf
 RUN \
   apt-get install -y fonts-droid fontconfig libfontconfig1 libfreetype6 libpng12-0 libjpeg8 libssl1.0.0 libx11-6 libxext6 libxrender1 xfonts-75dpi xfonts-base && \
