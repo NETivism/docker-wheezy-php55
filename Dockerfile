@@ -63,7 +63,7 @@ RUN \
 RUN apt-get install -y supervisor
 
 # syslog
-RUN echo "local0.* /var/www/html/log/drupal.log" > /etc/rsyslog.conf && \
+RUN echo "local0.* /var/www/html/log/drupal.log" >> /etc/rsyslog.conf && \
   service rsyslog restart
 
 # wkhtmltopdf
