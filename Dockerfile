@@ -52,12 +52,15 @@ RUN \
   sed -i 's/^pm = .*/pm = ondemand/g' /etc/php5/fpm/pool.d/www.conf && \
   sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php5/fpm/php-fpm.conf && \
   sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php5/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php5/fpm/pool.d/www.conf
+  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php5/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php5/fpm/pool.d/www.conf && \
+  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php5/fpm/pool.d/www.conf
 
 RUN apt-get install -y supervisor procps
 
 # syslog
 RUN echo "local0.* /var/www/html/log/drupal.log" >> /etc/rsyslog.conf && \
+  sed -i 's/\*\.\*;auth,authpriv\.none.*/*.*;local0.none;auth,authpriv.none -\/var\/log\/syslog/g' /etc/rsyslog.conf && \
   service rsyslog restart
 
 # wkhtmltopdf
