@@ -67,8 +67,8 @@ RUN \
   rm -f wkhtmltox.deb && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ADD container/apache/security.conf /etc/apache2/conf.d/security.conf
 ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
 ADD container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
 
 ### END
