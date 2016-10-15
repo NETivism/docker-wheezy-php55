@@ -58,11 +58,6 @@ RUN \
 
 RUN apt-get install -y supervisor procps
 
-# syslog
-RUN echo "local0.* /var/www/html/log/drupal.log" >> /etc/rsyslog.conf && \
-  sed -i 's/\*\.\*;auth,authpriv\.none.*/*.*;local0.none;auth,authpriv.none -\/var\/log\/syslog/g' /etc/rsyslog.conf && \
-  service rsyslog restart
-
 # wkhtmltopdf
 RUN \
   apt-get install -y fonts-droid fontconfig libfontconfig1 libfreetype6 libpng12-0 libjpeg8 libssl1.0.0 libx11-6 libxext6 libxrender1 xfonts-75dpi xfonts-base && \
@@ -74,6 +69,7 @@ RUN \
 
 ADD container/apache/security.conf /etc/apache2/conf.d/security.conf
 ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
 
 ### END
 WORKDIR /var/www/html
