@@ -34,6 +34,7 @@ RUN \
     php5-mysql \
     php5-curl \
     php5-cli \
+    php5-imap \
     curl \
     vim \
     git-core && \
