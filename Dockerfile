@@ -32,6 +32,7 @@ RUN \
     php5-curl \
     php5-memcached \
     php5-cli \
+    php5-imap \
     php5-fpm \
     curl \
     vim \
