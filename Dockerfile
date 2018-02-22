@@ -63,10 +63,11 @@ RUN apt-get install -y supervisor procps
 RUN \
   apt-get install -y fonts-droid fontconfig libfontconfig1 libfreetype6 libpng12-0 libjpeg8 libssl1.0.0 libx11-6 libxext6 libxrender1 xfonts-75dpi xfonts-base && \
   cd /tmp && \
-  wget -nv http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-wheezy-amd64.deb -O wkhtmltox.deb && \
-  dpkg -i wkhtmltox.deb && \
-  rm -f wkhtmltox.deb && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
+  wget -nv https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
+  tar xf wkhtmltox.tar.xz && \
+  rm -f wkhtmltox.tar.xz && \
+  mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/ && \
+  apt-get clean && rm -rf /tmp/wkhtmltox
 
 ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
