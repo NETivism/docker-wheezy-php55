@@ -10,11 +10,17 @@ ENV \
   COMPOSER_HOME=/root/.composer \
   PATH=/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
+WORKDIR /etc/apt
+RUN sed -i 's/http.debian.net/archive.debian.org/g' sources.list \
+    && sed -i 's/security.debian.org/archive.debian.org\/debian-security\//g' sources.list \
+    && sed -i 's/deb http:\/\/archive.debian.org\/debian wheezy-updates/#deb http:\/\/archive.debian.org\/debian wheezy-updates/g' sources.list \
+    && sed -i 's/deb http:\/\/archive.debian.org\/debian-security\//#deb http:\/\/archive.debian.org\/debian-security\//g' sources.list
+
 WORKDIR /etc/apt/sources.list.d
 RUN echo "deb http://packages.dotdeb.org wheezy all" > dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" >> dotdeb.list \
-    && echo "deb http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
-    && echo "deb-src http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
+    && echo "deb http://packages.dotdeb.org wheezy-php56 all" >> dotdeb.list \
+    && echo "deb-src http://packages.dotdeb.org wheezy-php56 all" >> dotdeb.list \
     && apt-get update && apt-get install -y wget && wget http://www.dotdeb.org/dotdeb.gpg \
     && apt-key add dotdeb.gpg && \
     rm -f dotdeb.gpg
