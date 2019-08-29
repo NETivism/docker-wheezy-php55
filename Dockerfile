@@ -21,6 +21,7 @@ RUN echo "deb http://packages.dotdeb.org wheezy all" > dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" >> dotdeb.list \
     && echo "deb http://packages.dotdeb.org wheezy-php56 all" >> dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy-php56 all" >> dotdeb.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E9C74FEEA2098A6E \
     && apt-get update && apt-get install -y wget && wget http://www.dotdeb.org/dotdeb.gpg \
     && apt-key add dotdeb.gpg && \
     rm -f dotdeb.gpg
@@ -75,9 +76,9 @@ RUN \
   mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/ && \
   apt-get clean && rm -rf /tmp/wkhtmltox
 
-ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
-ADD container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
+COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
+COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
 
 ### END
 WORKDIR /var/www/html
