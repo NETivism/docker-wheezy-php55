@@ -70,7 +70,7 @@ RUN apt-get install -y supervisor procps
 RUN \
   apt-get install -y fonts-droid fontconfig libfontconfig1 libfreetype6 libpng12-0 libjpeg8 libssl1.0.0 libx11-6 libxext6 libxrender1 xfonts-75dpi xfonts-base && \
   cd /tmp && \
-  wget -nv https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
+  wget -nv https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
   tar xf wkhtmltox.tar.xz && \
   rm -f wkhtmltox.tar.xz && \
   mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/ && \
