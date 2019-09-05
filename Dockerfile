@@ -10,11 +10,18 @@ ENV \
   COMPOSER_HOME=/root/.composer \
   PATH=/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
+WORKDIR /etc/apt
+RUN sed -i 's/http.debian.net/archive.debian.org/g' sources.list \
+    && sed -i 's/security.debian.org/archive.debian.org\/debian-security\//g' sources.list \
+    && sed -i 's/deb http:\/\/archive.debian.org\/debian wheezy-updates/#deb http:\/\/archive.debian.org\/debian wheezy-updates/g' sources.list \
+    && sed -i 's/deb http:\/\/archive.debian.org\/debian-security\//#deb http:\/\/archive.debian.org\/debian-security\//g' sources.list
+
 WORKDIR /etc/apt/sources.list.d
 RUN echo "deb http://packages.dotdeb.org wheezy all" > dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" >> dotdeb.list \
     && echo "deb http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E9C74FEEA2098A6E \
     && apt-get update && apt-get install -y wget && wget http://www.dotdeb.org/dotdeb.gpg \
     && apt-key add dotdeb.gpg && \
     rm -f dotdeb.gpg
@@ -63,15 +70,15 @@ RUN apt-get install -y supervisor procps
 RUN \
   apt-get install -y fonts-droid fontconfig libfontconfig1 libfreetype6 libpng12-0 libjpeg8 libssl1.0.0 libx11-6 libxext6 libxrender1 xfonts-75dpi xfonts-base && \
   cd /tmp && \
-  wget -nv https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
+  wget -nv https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
   tar xf wkhtmltox.tar.xz && \
   rm -f wkhtmltox.tar.xz && \
   mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/ && \
   apt-get clean && rm -rf /tmp/wkhtmltox
 
-ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
-ADD container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
+COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
+COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
 
 ### END
 WORKDIR /var/www/html
