@@ -76,6 +76,10 @@ RUN \
   mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/ && \
   apt-get clean && rm -rf /tmp/wkhtmltox
 
+# Update certificates
+RUN sed -i "s/^mozilla\/AddTrust_External_Root.crt/!mozilla\/AddTrust_External_Root.crt/" /etc/ca-certificates.conf
+RUN update-ca-certificates
+
 COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
 COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
