@@ -1,6 +1,19 @@
 #!/bin/bash
 set -eo pipefail
 
+function doUpgrade() {
+  mysqld --skip-networking --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/www/html/log/mysql.log &
+  PID=$!
+  while ! pgrep -u mysql mysqld > /dev/null; do sleep 3; done
+  sleep 10
+  mysqldump --add-drop-table -uroot -p$INIT_PASSWD mysql > /var/lib/mysql/before-upgrade_mysql.sql
+  mysql_upgrade -uroot -p$INIT_PASSWD
+  while pgrep -u root mysql_upgrade; do sleep 3; done
+  if ! kill -s TERM $PID || ! wait $PID; then
+    exit 1
+  fi
+}
+
 # Get config
 
 if [ ! -d "/var/run/mysqld" ]; then
@@ -41,6 +54,24 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
   echo
   echo 'MySQL init process done. Ready for start up.'
   echo
+else
+  NeedToUpgrade=""
+
+  if [ ! -f /var/lib/mysql/mysql_upgrade_info ]; then
+    NeedToUpgrade="true"
+  fi
+
+  if [ -f /var/lib/mysql/mysql_upgrade_info ]; then
+    Version=$(cat /var/lib/mysql/mysql_upgrade_info | awk -F "-" '{print $1}')
+    isCurrentVersion=$(dpkg -l | grep 'mariadb-common' | { grep "$Version" || true; })
+    if [ -z "$isCurrentVersion" ]; then
+      NeedToUpgrade="true"
+    fi
+  fi
+
+  if [ -n "$NeedToUpgrade" ]; then
+    doUpgrade
+  fi
 fi
 
 exec "mysqld" --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/www/html/log/mysql.log
