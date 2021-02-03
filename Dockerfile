@@ -1,89 +1,97 @@
-FROM netivism/docker-wheezy-mariadb 
+FROM netivism/docker-debian-base:buster
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ENV \
-  APACHE_RUN_USER=www-data \
-  APACHE_RUN_GROUP=www-data \
-  APACHE_LOG_DIR=/var/log/apache2 \
-  APACHE_LOCK_DIR=/var/lock/apache2 \
-  APACHE_PID_FILE=/var/run/apache2.pid \
   COMPOSER_HOME=/root/.composer \
   PATH=/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-WORKDIR /etc/apt
-RUN sed -i 's/http.debian.net/archive.debian.org/g' sources.list \
-    && sed -i 's/security.debian.org/archive.debian.org\/debian-security\//g' sources.list \
-    && sed -i 's/deb http:\/\/archive.debian.org\/debian wheezy-updates/#deb http:\/\/archive.debian.org\/debian wheezy-updates/g' sources.list \
-    && sed -i 's/deb http:\/\/archive.debian.org\/debian-security\//#deb http:\/\/archive.debian.org\/debian-security\//g' sources.list
-
+#mariadb
 WORKDIR /etc/apt/sources.list.d
-RUN echo "deb http://packages.dotdeb.org wheezy all" > dotdeb.list \
-    && echo "deb-src http://packages.dotdeb.org wheezy all" >> dotdeb.list \
-    && echo "deb http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
-    && echo "deb-src http://packages.dotdeb.org wheezy-php55 all" >> dotdeb.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E9C74FEEA2098A6E \
-    && apt-get update && apt-get install -y wget && wget http://www.dotdeb.org/dotdeb.gpg \
-    && apt-key add dotdeb.gpg && \
-    rm -f dotdeb.gpg
+RUN \
+    apt-get update && \
+    apt-get install -y apt-transport-https wget gnupg && \
+    echo "deb https://packages.sury.org/php/ buster main" > phpsury.list && \
+    echo "deb-src https://packages.sury.org/php/ buster main" >> phpsury.list && \
+    wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
+    apt-get update && \
+    apt-get install -y wget mariadb-server gcc make autoconf libc-dev pkg-config
 
 WORKDIR /
 RUN \
-  apt-get update && \
   apt-get install -y \
     rsyslog \
-    php5-common \
-    php5-curl \
-    php5-gd \
-    php5-mcrypt \
-    php5-mysql \
-    php5-curl \
-    php5-memcached \
-    php5-cli \
-    php5-imap \
-    php5-fpm \
+    php5.6 \
+    php5.6-curl \
+    php5.6-imap \
+    php5.6-gd \
+    php5.6-mysql \
+    php5.6-mbstring \
+    php5.6-xml \
+    php5.6-memcached \
+    php5.6-mcrypt \
+    php5.6-cli \
+    php5.6-fpm \
+    php5.6-zip \
     curl \
     vim \
-    git-core && \
-  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-  composer global require drush/drush:7.0.0 && \
-  git clone https://github.com/NETivism/docker-sh.git /home/docker
+    unzip \
+    git-core
 
-### Apache
-# remove default enabled site
 RUN \
-  mkdir -p /var/www/html/log/supervisor && \
-  cp -f /home/docker/php/default55.ini /etc/php5/docker_setup.ini && \
-  ln -s /etc/php5/docker_setup.ini /etc/php5/fpm/conf.d/ && \
-  cp -f /home/docker/php/default55_cli.ini /etc/php5/cli/conf.d/ && \
-  cp -f /home/docker/php/default_opcache_blacklist /etc/php5/opcache_blacklist && \
-  sed -i 's/^listen = .*/listen = 80/g' /etc/php5/fpm/pool.d/www.conf && \
-  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php5/fpm/pool.d/www.conf && \
-  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php5/fpm/php-fpm.conf && \
-  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php5/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php5/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php5/fpm/pool.d/www.conf && \
-  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php5/fpm/pool.d/www.conf
+  mkdir -p /root/.composer && \
+  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+  composer global require drush/drush:8.3.0 && \
+  cd /root/.composer && \
+  composer clearcache
 
 RUN apt-get install -y supervisor procps
 
 # wkhtmltopdf
+WORKDIR /tmp
 RUN \
-  apt-get install -y fonts-droid fontconfig libfontconfig1 libfreetype6 libpng12-0 libjpeg8 libssl1.0.0 libx11-6 libxext6 libxrender1 xfonts-75dpi xfonts-base && \
-  cd /tmp && \
+  apt-get install -y fonts-droid-fallback fontconfig ca-certificates fontconfig libc6 libfreetype6 libjpeg62-turbo libpng16-16 libssl1.1 libstdc++6 libx11-6 libxcb1 libxext6 libxrender1 xfonts-75dpi xfonts-base zlib1g && \
   wget -nv https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
   tar xf wkhtmltox.tar.xz && \
   rm -f wkhtmltox.tar.xz && \
   mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/ && \
   apt-get clean && rm -rf /tmp/wkhtmltox
 
-# Update certificates
-RUN sed -i "s/^mozilla\/AddTrust_External_Root.crt/!mozilla\/AddTrust_External_Root.crt/" /etc/ca-certificates.conf
-RUN update-ca-certificates
+RUN \
+  apt-get remove -y gcc make autoconf libc-dev pkg-config && \
+  apt-get autoremove -y && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+### PHP FPM Config
+# remove default enabled site
+RUN \
+  mkdir -p /var/www/html/log/supervisor && \
+  git clone https://github.com/NETivism/docker-sh.git /home/docker && \
+  cp -f /home/docker/php/default56.ini /etc/php/5.6/docker_setup.ini && \
+  ln -s /etc/php/5.6/docker_setup.ini /etc/php/5.6/fpm/conf.d/ && \
+  cp -f /home/docker/php/default56_cli.ini /etc/php/5.6/cli/conf.d/ && \
+  cp -f /home/docker/php/default_opcache_blacklist /etc/php/5.6/opcache_blacklist && \
+  sed -i 's/^listen = .*/listen = 80/g' /etc/php/5.6/fpm/pool.d/www.conf && \
+  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/5.6/fpm/pool.d/www.conf && \
+  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/5.6/fpm/php-fpm.conf && \
+  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php/5.6/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php/5.6/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/5.6/fpm/pool.d/www.conf && \
+  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/5.6/fpm/pool.d/www.conf
+
 COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
 COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
+COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN \
+  mkdir -p /run/php && chmod 777 /run/php
+
+RUN \
+  echo "source /usr/share/vim/vim81/defaults.vim" > /etc/vim/vimrc.local && \
+  echo "let skip_defaults_vim = 1" >> /etc/vim/vimrc.local && \
+  echo "if has('mouse')" >> /etc/vim/vimrc.local && \
+  echo "  set mouse=" >> /etc/vim/vimrc.local && \
+  echo "endif" >> /etc/vim/vimrc.local
 
 ### END
 WORKDIR /var/www/html
+ENV TERM=xterm
 CMD ["/usr/bin/supervisord"]
