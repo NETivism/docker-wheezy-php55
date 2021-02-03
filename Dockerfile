@@ -18,6 +18,7 @@ RUN \
 
 WORKDIR /
 RUN \
+  apt-get update && \
   apt-get install -y \
     rsyslog \
     php5.6 \
