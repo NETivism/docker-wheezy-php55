@@ -14,7 +14,7 @@ RUN \
     echo "deb-src https://packages.sury.org/php/ buster main" >> phpsury.list && \
     wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
     apt-get update && \
-    apt-get install -y wget mariadb-server gcc make autoconf libc-dev pkg-config
+    apt-get install -y wget mariadb-server mariadb-backup gcc make autoconf libc-dev pkg-config google-perftools qpdf
 
 WORKDIR /
 RUN \
@@ -33,6 +33,9 @@ RUN \
     php5.6-cli \
     php5.6-fpm \
     php5.6-zip \
+    php5.6-bz2 \
+    php5.6-ssh2 \
+    php5.6-yaml \
     curl \
     vim \
     unzip \
